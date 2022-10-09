@@ -42,10 +42,13 @@ $(document).ready(function () {
     mostrarEnTabla();
 });
 
-//funcion para el renderizado de los productos en cards
-function renderizarProductos() {
-    for (const producto of productosJSON) {
-    $("#section-productos").append(`<div class="card-product"> 
+//funcion para el renderizado de los productos en cards con fetch
+function renderizarProductos(){
+    fetch('./json/productos.json')
+        .then(res => res.json())
+        .then(productos => {
+            productos.forEach(producto => {
+                $("#section-productos").append(`<div class="card-product"> 
                                     <div class="img-container">
                                     <img src="${producto.foto}" alt="${producto.nombre}" class="img-product"/>
                                     </div>
@@ -56,22 +59,15 @@ function renderizarProductos() {
                                     </div>
                                     </div>`);
 
-    $(`#btn${producto.id}`).on('click', function () {
-        agregarAlCarrito(producto);
-        $(`#btn${producto.id}`).fadeOut(200).fadeIn(200);
-    });
-    }
-};
-
-//utilizo AJAX para obtener la informacion de los productos creados en el archivo json
-function obtenerJSON() {
-    $.getJSON("./json/productos.json", function (respuesta, estado) {
-    if (estado == "success") {
-        productosJSON = respuesta;
-        renderizarProductos();
-    }
-    });
+                $(`#btn${producto.id}`).on('click', function () {
+                    agregarAlCarrito(producto);
+                    $(`#btn${producto.id}`).fadeOut(200).fadeIn(200);
+                    });
+            })
+        })
 }
+
+renderizarProductos();
 
 //funcion para filtrar los productos segun precio y orden alfabetico
 function ordenarProductos() {
